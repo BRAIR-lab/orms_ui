@@ -1,3 +1,16 @@
+/**
+ * ImageShower.jsx
+ * 
+ * This component shows a live image stream from a ROS topic.
+ * It gets the image data directly from the ROS topic through a websocket.
+ * 
+ * Props:
+ * - ros: the ROSLIB.Ros instance to communicate with ROS.
+ * - paramClient: the ROSLIB.ParamClient instance to get the stream type and names from ROS.
+ * - name: the name of the component, used for display purposes.
+ * - onClick: a callback function to be called when the close button is clicked.
+ * - topic: the name of the ROS topic to subscribe to for image data.
+ */
 import { Image, Card } from '@mantine/core';
 import { useEffect, useState } from "react";
 import * as ROSLIB from "roslib";

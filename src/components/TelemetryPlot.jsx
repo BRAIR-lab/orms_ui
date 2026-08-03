@@ -1,3 +1,17 @@
+/**
+ * TelemetryPlot.jsx
+ * 
+ * This component shows a live telemetry plot for a specific sensor field.
+ * It gets the telemetry data directly from the taskboard through a websocket to which it subscribes using the telemetryUpdaters prop.
+ * 
+ * Props:
+ * - name: the name of the component, used for display purposes.
+ * - field: the sensor field to subscribe to for telemetry data.
+ * - onClick: a callback function to be called when the close button is clicked.
+ * - telemetryUpdaters: an object that holds the telemetry update functions for different data types. The component adds its own update function for the specified sensor field.
+ * - min_show: (optional) the minimum value to show on the y-axis of the plot. Default is -0.1.
+ * - max_show: (optional) the maximum value to show on the y-axis of the plot. Default is 1.1.
+ */
 import { useEffect, useRef, useState } from "react";
 import { Chart } from "chart.js/auto";
 import { Card, Text } from '@mantine/core';

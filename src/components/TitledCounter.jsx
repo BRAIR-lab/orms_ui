@@ -1,3 +1,19 @@
+/**
+ * TitledCounter.jsx
+ * 
+ * This component renders a titled counter that displays a value and its unit.
+ * It takes a name, field, onClick callback, telemetryUpdaters object, state, unit, and isbool flag as props.
+ * The component subscribes to telemetry updates for the specified field and updates the displayed value accordingly.
+ * 
+ * Props:
+ * - name: the name of the counter, used for display purposes.
+ * - field: the telemetry field to subscribe to for updates.
+ * - onClick: a callback function to be called when the close button is clicked.
+ * - telemetryUpdaters: an object containing functions to update telemetry data.
+ * - state: the state of the counter (normal, warning, critical) which affects its styling.
+ * - unit: the unit of measurement for the counter value (default is 'clicks').
+ * - isbool: a boolean flag indicating if the value is boolean (true/false).
+ */
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Card, Paper, Text, Center, Group, Badge } from '@mantine/core';

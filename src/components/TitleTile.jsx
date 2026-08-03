@@ -1,3 +1,14 @@
+/**
+ * TitleTile.jsx
+ * 
+ * This component renders a title section for a module or component.
+ * It takes a text prop for the title and an optional onClick prop for a close button.
+ * If the onClick prop is provided, a close button will be displayed next to the title.
+ * 
+ * Props:
+ * - text: the title text to be displayed.
+ * - onClick: an optional callback function to be called when the close button is clicked.
+ */
 import { Card } from '@mantine/core';
 import CloseButton from './CloseButton';
 

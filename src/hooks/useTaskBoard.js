@@ -8,7 +8,7 @@ export function connectWebSocket(deviceIP, onRetry, setBoardStatus) {
     
     let didConnect = false;
 
-    // sometimes the onerror is not called so this part of code is needed DX
+    // sometimes the onerror is not called so this part of code is needed
     const timeout = setTimeout(() => {
       if (!didConnect) {
         console.warn("WebSocket connection timeout");

@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { Container, Card, Stack, Select, TextInput, Button, Title, Loader, Group, Alert, Image} from "@mantine/core";
 import { isValidAddress } from "../hooks/useRos"
 
-const API_URL = "http://localhost:3001/api/config";
-
 function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) {
   const [robotType, setRobotType] = useState("");
   const [algorithm, setAlgorithm] = useState("");

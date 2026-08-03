@@ -2,9 +2,6 @@ import { Button, Card, Modal, Select } from "@mantine/core";
 import { useState } from 'react';
 import ImageShower from "../components/ImageShower";
 import BoardStatus from "../components/BoardStatus";
-import APlot from '../components/APlot';
-import AnotherPlot from '../components/AnotherPlot';
-import ViewButtons from '../components/ViewButtons';
 import Timer from "../components/Timer";
 import CloseButton from "../components/CloseButton";
 import TelemetryPlot from "../components/TelemetryPlot";
@@ -41,29 +38,9 @@ function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRu
 			return (
 				<ImageShower paramClient={paramClient} ros={ros} name={'Camera Stream'} onClick={onClose} topic={match[1]} />
 			);
-		case 'cameraButtons':
-			return (
-				<Card shadow="sm" padding="lg" radius="md" withBorder style={{ height: '100%' }}>
-				<Card.Section withBorder inheritPadding py="md" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-					<h3 style={{ margin: 0 }}>Camera View</h3>
-					<CloseButton onClick={onClose} />
-				</Card.Section>
-				<Card.Section inheritPadding py="md">
-					<ViewButtons setViewSrv={setViewSrv} />
-				</Card.Section>
-				</Card>
-			);
 		case 'boardStatus':
 			return (
 				<BoardStatus ros={ros} paramClient={paramClient} name={'Task Status'} onClick={onClose} telemetryUpdaters={telemetryUpdaters}/>
-			)
-		case 'analytics':
-			return (
-				<APlot ros={ros} paramClient={paramClient} name={'Analytics'} onClick={onClose}/>
-			)
-		case 'temperaturePlot':
-			return (
-				<AnotherPlot ros={ros} paramClient={paramClient} name={'Temperature Plot'} onClick={onClose}/>
 			)
 		case 'timer':
 			return (
@@ -71,7 +48,7 @@ function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRu
 			)
 		case 'chat':
 			return (
-				<ChatToBaby name={'FrankChat'} onClick={onClose} ros={ros}/>
+				<ChatToBaby name={'Robot Chat Interface'} onClick={onClose} ros={ros}/>
 			)
 		default:
 			if(name.includes('telemetry')){

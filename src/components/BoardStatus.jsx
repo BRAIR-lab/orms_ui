@@ -1,3 +1,25 @@
+/**
+ * BoardStatus.jsx
+ * 
+ * This component shows the status of the current task in execution.
+ * It gets the informations directly from the taskboard through a websocket to which it subscribes using the telemetryUpdaters prop.
+ * 
+ * Props:
+ * - ros: (not used) the ROSLIB.Ros instance to communicate with ROS.
+ * - paramClient: the ROSLIB.ParamClient instance to get the list of tasks from ROS.
+ * - name: the name of the component, used for display purposes.
+ * - onClick: a callback function to be called when the close button is clicked.
+ * - telemetryUpdaters: an object that holds the telemetry update functions for different data types. The component adds its own update function for 'taskStat' data type.
+ * 
+ * State:
+ * - isCompleted: the number of tasks completed so far.
+ * - items: the list of tasks to be displayed.
+ * 
+ * The component subscribes to the 'taskStat' data type in the telemetryUpdaters prop and updates the isCompleted state accordingly. It also shows a toast notification when a task is completed.
+ * 
+ * The component cleans up the subscription and dismisses the toast notification when the component unmounts or when the location changes.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import * as ROSLIB from "roslib";
 import { toast } from "react-toastify";
