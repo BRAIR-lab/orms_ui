@@ -1,0 +1,43 @@
+{
+  "name": "simple_gui",
+  "version": "0.0.0",
+  "main": "/src/index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@mantine/core": "^8.3.11",
+    "@mantine/hooks": "^8.3.11",
+    "@tabler/icons-react": "^3.36.1",
+    "chart.js": "^4.5.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "install": "^0.13.0",
+    "npm": "^11.11.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-grid-layout": "^2.2.2",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.11.0",
+    "react-scripts": "^5.0.0",
+    "react-toastify": "^11.0.5",
+    "roslib": "^2.0.1",
+    "three": "^0.183.2",
+    "urdf-loader": "^0.12.6"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

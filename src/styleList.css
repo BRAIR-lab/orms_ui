@@ -1,0 +1,60 @@
+.list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.25rem;
+  padding: 0.5rem;
+
+  width: fit-content;
+  margin: 2rem auto;
+
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.list-item {
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+
+  border-radius: 6px;
+  background-color: #f9f9f9;
+
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.list-item:hover {
+  background-color: #eaeaea;
+  transform: translateY(-1px);
+}
+
+
+
+.floating {
+  position: absolute;
+  box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+}
+
+
+
+.list-item.drop-zone {
+  background-color: #ccc;
+  transition-property: height padding;
+  transition-duration: 250ms;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+  overflow: hidden;
+}
+
+.list-item.drop-zone.hidden {
+  height: 0px;
+  padding: 0px
+}
+
+
+
+
