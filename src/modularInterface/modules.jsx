@@ -10,7 +10,7 @@ import { ChatToBaby } from "./chat";
 
 const validSensors = ['FADER', 'DOOR_ANGLE', 'PROBE_GOAL_ANALOG', 'TEMPERATURE', 'BLUE_BUTTON_COUNTER', 'RED_BUTTON_COUNTER', 'ATTACHED_CABLE'] // 'FADER_BLUE_BUTTON',
 //const telemetryModules = validSensors.map((sensor) => {return 'telemetry+' + sensor})
-const all_modules = [ 'camera', 'boardStatus', 'analytics', 'timer', 'telemetry', 'chat'] //'cameraButtons', 'temperaturePlot'
+const all_modules = [ 'camera', 'boardStatus', 'timer', 'telemetry', 'chat'] //'cameraButtons', 'temperaturePlot', 'analytics'
 
 const defaultLayout = [
     {"i":"boardStatus","x":3,"y":3,"w":3,"h":2, "moved":false,"static":false, "minW": 3, "minH":2, "maxW":3, "maxH":4},
