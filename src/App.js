@@ -4,7 +4,8 @@ import "./toast.css";
 import { AppShell, Container, Button, Group, Tooltip } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react"
-import { IconExternalLink } from '@tabler/icons-react';
+import { IconExternalLink, IconLayoutGridAdd } from '@tabler/icons-react';
+
 
 // Components import
 import RobotSetup from "./views/RobotSetup";
@@ -18,7 +19,7 @@ import { useRos } from "./hooks/useRos";
 import { useTaskBoard } from './hooks/useTaskBoard';
 import { useMuRos } from './hooks/useMuRos';
 
-function Navigation( {isRunning, taskboardIP} ) {
+function Navigation({ isRunning, taskboardIP, onOpenDrawer }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -38,6 +39,13 @@ function Navigation( {isRunning, taskboardIP} ) {
   return (
     <Container size="xl" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       <Group gap="md">
+        {location.pathname === "/executing" && onOpenDrawer && (
+           <Button
+            variant="light" size='md' color="violet" 
+            onClick={onOpenDrawer}
+            // leftSection={<IconLayoutGridAdd/>}
+          >{<IconLayoutGridAdd/>}</Button>
+        )}
         {links.map((link) => (
           <Tooltip 
             label="Tooltip for disabled button" 
@@ -75,6 +83,7 @@ export default function All() {
   const { ws, boardStatus, retryBoard } = useTaskBoard(boardIP)
   const { muRosStatus, retryMuRos } = useMuRos(boardIP, ws, muRosIP)
   const [isRunning, setIsRunning] = useState(false)
+  const [drawerOpened, setDrawerOpened] = useState(false);
   
 
   return (
@@ -90,7 +99,7 @@ export default function All() {
         <AppShell.Header withBorder>
           <Container size="xl" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
             <Group gap='lg'>
-              <Navigation isRunning={isRunning} taskboardIP={boardIP}/>
+              <Navigation isRunning={isRunning} taskboardIP={boardIP} onOpenDrawer={() => setDrawerOpened(true)}/>
               <ThemeToggle />
             </Group>
           </Container>
@@ -119,6 +128,8 @@ export default function All() {
                   ros={ros}
                   toggleRunning={ () => setIsRunning(!isRunning)}
                   taskboard_ws={ws}
+                  drawerOpened={drawerOpened}
+                  onCloseDrawer={() => setDrawerOpened(false)}
                 />
               }
             />

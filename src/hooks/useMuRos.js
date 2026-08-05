@@ -29,7 +29,10 @@ export function useMuRos(boardIP, ws, muRosIP) {
   const [muRosStatus, setMuRosStatus] = useState('idle');
 
 	const connect = () => {
-		if (!muRosIP || !boardIP || !ws) return;
+		if (!muRosIP || !boardIP || !ws){
+			setMuRosStatus("error");
+			return;
+		}
 		ws.onmessage = (event) => {
 			try {
 				const msg = JSON.parse(event.data);

@@ -13,7 +13,7 @@ import { defaultLayout, getNamedModule, all_modules } from '../modularInterface/
 
 const telemetryRegister = {}
 
-function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws }) {
+function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws, drawerOpened, onCloseDrawer }) {
   const getInitialLayout = () => {
     const saved = localStorage.getItem('layout');
     return saved ? JSON.parse(saved) : defaultLayout;
@@ -28,9 +28,6 @@ function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws })
   }, [layout]);
   // Reshape the window
   const [width, setWidth] = React.useState(window.innerWidth - 64);
-  // show/hide the menu
-  const [opened, { open, close }] = useDisclosure(false);
-  // an array of function to call when there is an update from the taskboard
 
   function addElement(name){
     const defaultElement = defaultLayout.find(item => item.i === name);
@@ -92,23 +89,15 @@ function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws })
   return (
     <div style={{ padding: '16px', width: '100vw', height: '100vh' }}>
       <ToastContainer />
-      <Drawer offset={8} radius="md" opened={opened} onClose={close} title="Additional Elements">
+      <Drawer offset={8} radius="md" opened={drawerOpened} onClose={onCloseDrawer} title="Additional Elements">
        {
         additionalModules.map((name) => (
           <div key={name} style={{ marginBottom: '12px' }}>
-            <AddModule 
-              name={name} 
-              addElement={addElement} 
-              layout={layout}
-              imgTopics={imageNames}
-            />
+            <AddModule name={name} addElement={addElement} layout={layout} imgTopics={imageNames} />
           </div>
         ))
       }
       </Drawer>
-      <Button variant="default" onClick={open}>
-        Open Drawer
-      </Button>
       <GridLayout
         className="layout"
         layout={layout}

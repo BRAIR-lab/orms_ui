@@ -12,7 +12,7 @@ function ThemeToggle() {
   const { colorScheme } = useMantineColorScheme();
 
 
-  return <Button onClick={toggleColorScheme}>
+  return <Button onClick={toggleColorScheme} size='md'>
       {colorScheme == 'dark' ? <IconSun /> : <IconMoonFilled />}
   </Button>;
 }
