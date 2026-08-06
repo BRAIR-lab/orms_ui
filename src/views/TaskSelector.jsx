@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import * as ROSLIB from "roslib";
 import { ToastContainer, toast } from "react-toastify";
-import { Button, Container, Group, Paper, Text, SimpleGrid, Stack, Title, CloseButton, Center } from "@mantine/core";
+import { Button, Container, Group, Paper, Text, SimpleGrid, Stack, Title, CloseButton, Center, NumberInput, Badge } from "@mantine/core";
 import { Link } from "react-router-dom";
 
 function TaskSelector({ ros, paramClient }) {
   const [availableTasks, setAvailableTasks] = useState(["waiting for Ros"]);
+  const [selectableTarget, setSelectableTarget] = useState([]);
   const [executionTasks, setExecutionTasks] = useState([]);
   const [isReady, setIsReady] = useState(false);
   const [sendList, setSendList] = useState(null);
+  const [selectedValues, setSelectedValues] = useState({});
 
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
@@ -26,9 +28,23 @@ function TaskSelector({ ros, paramClient }) {
 
   useEffect(() => {
     if (!paramClient) return;
+    paramClient.callService({ names: ['board.selectable_target_list'] }, function (result_sel) {
+      if(result_sel.values[0].string_array_value.length == 1 && result_sel.values[0].string_array_value == ""){
+        setSelectableTarget([]);  
+        console.log("no_selectable value")
+      } else{
+        let selVal = {};
+        for (const val of result_sel.values[0].string_array_value) {
+          selVal[val] = 0;
+        }
+        setSelectableTarget(result_sel.values[0].string_array_value)
+        console.log("With value: " + selectableTarget)
+        setSelectedValues(selVal);
+      }
+    });
     paramClient.callService({ names: ['board.list'] }, function (result_all) {
       paramClient.callService({ names: ['board.selected_list'] }, function (result_sel) {
-        console.log(result_sel.values[0].string_array_value)
+        console.log("Selected: " + result_sel.values[0].string_array_value)
         if(result_sel.values[0].string_array_value.length == 1 && result_sel.values[0].string_array_value == "")
           setExecutionTasks([]);  
         else
@@ -45,6 +61,12 @@ function TaskSelector({ ros, paramClient }) {
   }, [paramClient]);
 
   const moveToExecution = (task, index) => {
+    const value = selectedValues[task];
+    console.log("selected value: " + value)
+    if ((value === undefined || value === null || value === "" || value < 0 || value > 1) && (selectableTarget.includes(task))) {
+      toast.error(`Please enter a value (0–1) for "${task}" before adding.`);
+      return;
+    }
     const newAvailable = [...availableTasks];
     newAvailable.splice(index, 1);
     setAvailableTasks(newAvailable);
@@ -88,7 +110,14 @@ function TaskSelector({ ros, paramClient }) {
   const handleSendList = () => {
     if (!sendList) return;
     
-    sendList.callService({ data: executionTasks }, (result) => {
+    let vals = []
+    for(let i = 0; i < executionTasks.length; i++){
+      if(selectableTarget.includes(executionTasks[i]))
+        vals.push(selectedValues[executionTasks[i]]);
+      else
+        vals.push(0)
+    }
+    sendList.callService({ data: executionTasks, values: vals}, (result) => {
       setIsReady(result.success);
       if (result.success) {
         toast.success(result.message);
@@ -106,16 +135,25 @@ function TaskSelector({ ros, paramClient }) {
         <div>
           <Title order={3} mb="md">Available Tasks</Title>
           <Stack gap="sm">
-            {availableTasks.map((task, index) => (
-              <Paper key={`avail-${task}-${index}`} shadow="sm" p="md" withBorder>
+            {availableTasks.map((task, index) => {
+              const val = selectedValues[task];
+              return (<Paper key={`avail-${task}-${index}`} shadow="sm" p="md" withBorder>
                 <Group justify="space-between">
                   <Text fw={500}>{task}</Text>
+                  {(selectableTarget.includes(task)) ? <NumberInput
+                        label="Value" placeholder="0–1" min={0} max={1} step={0.05} decimalScale={2} value={  selectedValues[task] ?? ""}
+                        onChange={(v) =>
+                          setSelectedValues((prev) => ({ ...prev, [task]: v }))
+                        }
+                        style={{ width: 90 }} size="xs"
+                        error={val !== undefined && val !== null && val !== "" && (val < 0 || val > 1)}
+                      /> : <div></div>}
                   <Button variant="light" size="xs" onClick={() => moveToExecution(task, index)}>
                     Add
                   </Button>
                 </Group>
               </Paper>
-            ))}
+            )})}
             {availableTasks.length === 0 && (
               <Center p="xl">
                 <Text c="dimmed">No more tasks available</Text>
@@ -157,6 +195,7 @@ function TaskSelector({ ros, paramClient }) {
                     <Text c="dimmed" size="lg" title="Drag to reorder">☰</Text>
                     <Text fw={500}>{task}</Text>
                   </Group>
+                  {selectableTarget.includes(task)?<Text fw={300}>{selectedValues[task]}</Text>:<div></div>}
                   <CloseButton onClick={() => moveToAvailable(task, index)} title="Remove task" />
                 </Group>
               </Paper>

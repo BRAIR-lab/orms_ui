@@ -37,7 +37,6 @@ export function useMuRos(boardIP, ws, muRosIP) {
 			try {
 				const msg = JSON.parse(event.data);
 				if(msg.ws_data_type !== "system_status") return
-				console.log(msg)
 				if (msg.microros.connected) {
 					setMuRosStatus("ready");
 				} else {
