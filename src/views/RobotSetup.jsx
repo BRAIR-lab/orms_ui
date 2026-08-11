@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { Container, Card, Stack, Select, TextInput, Button, Title, Loader, Group, Alert, Image} from "@mantine/core";
 import { isValidAddress } from "../hooks/useRos"
 
-function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) {
-  const [robotType, setRobotType] = useState("");
+function RobotSetup({ onRosIP, rosIP, onBoardIP, onRobot, boardIP, onMuRosIP, muRosIP, robotName }) {
   const [algorithm, setAlgorithm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,7 +16,7 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
         if (storedConfig) {
           const config = JSON.parse(storedConfig);
 
-          setRobotType(config.robotType || "");
+          onRobot(config.robotName || "");
           setAlgorithm(config.algorithm || "");
           onRosIP(config.rosIP || "");
           onBoardIP(config.boardIP || "");
@@ -40,7 +39,7 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
           if (!algorithm)
             setAlgorithm("v1");
           const config = {
-            robotType,
+            robotName,
             algorithm,
             rosIP,
             boardIP,
@@ -54,9 +53,9 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
       }
     }
     saveConfig();
-  }, [robotType, algorithm, rosIP, boardIP, muRosIP, isLoading]);
+  }, [robotName, algorithm, rosIP, boardIP, muRosIP, isLoading]);
 
-  const canExecute = robotType && algorithm && isValidAddress(boardIP, true) && isValidAddress(rosIP) && isValidAddress(muRosIP);
+  const canExecute = robotName && algorithm && isValidAddress(boardIP, true) && isValidAddress(rosIP) && isValidAddress(muRosIP);
 
   if (isLoading) {
     return (
@@ -86,8 +85,8 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
             <Select
               label="Robot Platform"
               placeholder="Select a robot"
-              value={robotType}
-              onChange={(value) => setRobotType(value || "")}
+              value={robotName}
+              onChange={(value) => onRobot(value || "")}
               data={[
                 { value: "ur5", label: "UR5 + Robotiq HandE" },
                 { value: "franka", label: "Franka Emika + Franka Hand" },
@@ -169,7 +168,7 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
                 color="green"
                 icon={null}
               >
-                Robot: <strong>{robotType.toUpperCase()}</strong> | Task board: <strong>{algorithm.replace(/_/g, " ")}</strong>
+                Robot: <strong>{robotName.toUpperCase()}</strong> | Task board: <strong>{algorithm.replace(/_/g, " ")}</strong>
               </Alert>
             )}
 
@@ -195,7 +194,7 @@ function RobotSetup({ onRosIP, rosIP, onBoardIP, boardIP, onMuRosIP, muRosIP }) 
       </Card>
       <Card shadow="lg" padding="xl" radius="md">
         <Image
-          src={robotType == 'ur5' ? "ur5.jpeg" : "franka.jpg"}
+          src={robotName == 'ur5' ? "ur5.jpeg" : "franka.jpg"}
           alt="Example image"
           height={160}
           fit="cover"

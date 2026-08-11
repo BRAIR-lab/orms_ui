@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Container, Card, Stack, Text, Loader, ThemeIcon, Group, Button } from "@mantine/core";
+import * as ROSLIB from "roslib";
+import { Container, Card, Stack, Text, Loader, ThemeIcon, Group, Button, Tooltip } from "@mantine/core";
 import { IconCheck, IconX, IconClock } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
-function StatusItem({ label, status, onRetry }) {
+function StatusItem({ label, status, onRetry, errorMessage }) {
   let icon;
   let color;
 
@@ -21,12 +22,23 @@ function StatusItem({ label, status, onRetry }) {
     color = "gray";
   }
 
+  const iconElement = (
+    <ThemeIcon color={color} variant="light">
+      {icon}
+    </ThemeIcon>
+  );
+
   return (
     <Group justify="space-between">
       <Group>
-        <ThemeIcon color={color} variant="light">
-          {icon}
-        </ThemeIcon>
+        {/* Wrap in Tooltip only if it's an error and we have a message */}
+        {status === "error" && errorMessage ? (
+          <Tooltip label={errorMessage} withArrow position="top">
+            {iconElement}
+          </Tooltip>
+        ) : (
+          iconElement
+        )}
         <Text>{label}</Text>
       </Group>
 
@@ -39,17 +51,53 @@ function StatusItem({ label, status, onRetry }) {
   );
 }
 
-export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRosIP, muRosStatus, reloadROS, reloadBoard, reloadMuRos }) {
+export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRosIP, muRosStatus, reloadROS, reloadBoard, reloadMuRos, ros, robotName }) {
   const [robotStatus, setRobotStatus] = useState("idle");
+  const [robotErrorMessage, setRobotErrorMessage] = useState("");
 
-  useEffect(() => {
+  const selectRobot = () => {
+    if (!ros || !ros.isConnected) {
+      setRobotStatus("error");
+      setRobotErrorMessage("ROS is not connected");
+      return;
+    }
+
     setRobotStatus("loading");
+    setRobotErrorMessage("");
 
-    // TODO: replace with correct logic
-    setTimeout(() => {
-      setRobotStatus("ready");
-    }, 1500);
-  }, []);
+    const selectRobotClient = new ROSLIB.Service({
+      ros: ros,
+      name: "/select_robot",
+      // Note: Replace 'your_package_msgs' with the actual package that defines SetString
+      serviceType: "simple_server/srv/SetString" 
+    });
+
+    selectRobotClient.callService(
+      { data: robotName },
+      (result) => {
+        if (result.success) {
+          setRobotStatus("ready");
+        } else {
+          setRobotStatus("error");
+          setRobotErrorMessage(result.message || "Robot selection refused by server.");
+        }
+      },
+      (error) => {
+        setRobotStatus("error");
+        setRobotErrorMessage(error || "Service call failed.");
+      }
+    );
+  };
+  
+  useEffect(() => {
+    // Only attempt the call if ROS is fully ready
+    if (rosStatus === "ready" && robotName) {
+      selectRobot();
+    } else if (rosStatus === "error") {
+      setRobotStatus("error");
+      setRobotErrorMessage("Waiting for ROS connection...");
+    }
+  }, [rosStatus, robotName]);
 
   const canExecute = rosStatus === "ready" && boardStatus === "ready" && robotStatus === "ready"
 
@@ -64,8 +112,8 @@ export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRos
           <StatusItem label={`ROS (${rosIP || "not set"})`} status={rosStatus} onRetry={reloadROS}/>
           <StatusItem label={`Board (${boardIP || "not set"})`} status={boardStatus} onRetry={reloadBoard}/>
           <StatusItem label={`MuRos (${muRosIP || "not set"})`} status={muRosStatus} onRetry={reloadMuRos}/>
-          <StatusItem label="Robot Connection" status={robotStatus} />
-          
+          <StatusItem label={`Robot (${robotName}) Connection`} status={robotStatus} errorMessage={robotErrorMessage} onRetry={selectRobot}/>
+
           {/* Execute button */}
             <Group justify="flex-start" pt="lg">
               <Link to="/list" style={{ textDecoration: "none" }}>

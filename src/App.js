@@ -79,6 +79,7 @@ export default function All() {
   const [rosIP, setRosIP] = useState('')
   const [boardIP, setBoardIP] = useState('')
   const [muRosIP, setMuRosIP] = useState('')
+  const [selectedRobot, setSelectedRobot] = useState('')
   const { ros, status, paramClient, setViewSrv, retryRos } = useRos(rosIP)
   const { ws, boardStatus, retryBoard } = useTaskBoard(boardIP)
   const { muRosStatus, retryMuRos } = useMuRos(boardIP, ws, muRosIP)
@@ -111,13 +112,16 @@ export default function All() {
                 onRosIP={setRosIP} rosIP={rosIP} 
                 onBoardIP={setBoardIP} boardIP={boardIP}
                 onMuRosIP={setMuRosIP} muRosIP={muRosIP}
+                onRobot={setSelectedRobot} robotName={selectedRobot}
+                se
               />}
             />
             <Route path="/check" element={
               <WaitPage 
-                rosIP={rosIP} boardIP={boardIP} muRosIP={muRosIP}
+                rosIP={rosIP} boardIP={boardIP} muRosIP={muRosIP} ros={ros}
                 rosStatus={status} boardStatus={boardStatus} muRosStatus={muRosStatus}
                 reloadROS={retryRos} reloadBoard={retryBoard} reloadMuRos={retryMuRos}
+                robotName={selectedRobot}
               />} />
             <Route
               path="/executing"
