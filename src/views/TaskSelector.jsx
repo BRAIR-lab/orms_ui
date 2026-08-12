@@ -232,7 +232,7 @@ function TaskSelector({ ros, paramClient }) {
       <Group justify="flex-end" mt="xl">
         <ToastContainer />
         <Button onClick={handleSendList} variant="outline">
-          Send List
+          Update List
         </Button>
         <Button component={Link} to="/executing" disabled={!isReady}>
           Start

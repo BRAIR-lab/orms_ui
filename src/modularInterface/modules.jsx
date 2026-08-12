@@ -44,7 +44,7 @@ function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRu
 			)
 		case 'timer':
 			return (
-				<Timer ros={ros} paramClient={paramClient} name={'Execution Time'} onClick={onClose} toggleIsRunning={toggleIsRunning} />
+				<Timer ros={ros} paramClient={paramClient} name={'Execution Time'} onClick={onClose} toggleIsRunning={toggleIsRunning} telemetryUpdaters={telemetryUpdaters}/>
 			)
 		case 'chat':
 			return (
