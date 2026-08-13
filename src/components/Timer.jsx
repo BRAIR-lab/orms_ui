@@ -8,6 +8,8 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
   const [running, setRunning] = useState(false)
   const intervalRef = useRef(null)
   const [sendList, setSendList] = useState(null);
+  const [stopTask, setStopTask] = useState(null);
+  const [getFinalTime, setGetFinalTime] = useState(null);
 
   useEffect(() => {
     if (running) {
@@ -41,6 +43,11 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
         if(running){
           toggleIsRunning()
           setRunning(false)
+          getFinalTime.callService({}, (result) => {
+            if(result.success){
+              setTime(result.time)
+            }
+          })
         }
       }
     }
@@ -59,12 +66,25 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
       serviceType: 'simple_server/srv/StartTask'
     });
     setSendList(setListSrv);
+
+    var stopTaskSrv = new ROSLIB.Service({
+      ros: ros,
+      name: '/abort_task',
+      serviceType: 'simple_server/srv/StartTask'
+    });
+    setStopTask(stopTaskSrv);
+
+    var getFinalTimeSrv = new ROSLIB.Service({
+      ros: ros,
+      name: '/finish_time',
+      serviceType: 'simple_server/srv/FinishTime'
+    });
+    setGetFinalTime(getFinalTimeSrv)
   }, [ros]);
 
   const handleSendList = () => {
     if (!sendList) return;
     sendList.callService({}, (result) => {
-      setIsReady(result.success);
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -72,6 +92,11 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
       }
     });
   };
+
+  const handleStopTask = () => {
+    if (!stopTask) return;
+    stopTask.callService({}, (result) => {})
+  }
 
   return (
     <Card
@@ -110,8 +135,11 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
       <Group grow style={{ marginTop: 'auto' }}>
         <Button 
           onClick={() => {
-            if(!running)
+            if(!running) {
               handleSendList()
+            } else {
+              handleStopTask()
+            }
           }}
           color={running ? 'red' : 'green'}
           size="md"
