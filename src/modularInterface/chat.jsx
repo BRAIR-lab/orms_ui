@@ -2,7 +2,7 @@ import { ActionIcon, Container, Card, Box, ScrollArea, Group, Textarea, Flex } f
 import { useState, useRef, useEffect } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
 import TitleTile from "../components/TitleTile"
-import { IconSend } from "@tabler/icons-react"
+import { IconSend, IconTrash } from "@tabler/icons-react"
 import * as ROSLIB from "roslib";
 
 function Message({ children, isUser }) {
@@ -132,7 +132,18 @@ export function ChatToBaby({name, onClick, ros}) {
         } else {
           setLastAnswer((prev) => prev + feedback.partial_answer);
         }
-      }
+      },
+      function(error) {
+        setIsStreaming(false);
+        console.log(error)
+        try {
+          const jsonString = error.replace('GoalError: Action was aborted: ', '');
+          const data = JSON.parse(jsonString);
+          setLastAnswer(data.full_answer);
+        } catch (e) {
+          setLastAnswer(error);
+        }
+      },
     )
   }
 
@@ -180,7 +191,7 @@ export function ChatToBaby({name, onClick, ros}) {
       </ScrollArea>
 
       {/* Add message / footer */}
-      <Flex gap='md' align="flex-end">
+      <Flex gap='md' align="center">
         <Textarea
           placeholder="Message..."
           autoFocus minRows={2} maxRows={6} radius="md" autosize
@@ -198,9 +209,18 @@ export function ChatToBaby({name, onClick, ros}) {
             }
           }}
         />
-        <ActionIcon size="36" radius="md" onClick={addMessage} disabled={isStreaming}>
-          <IconSend size={20} />
-        </ActionIcon>
+        <Flex direction="column" gap="sm">
+          <ActionIcon size="36" radius="md" onClick={() => {
+              var goal = { question: "" }
+              // use askAction from state
+              askAction?.sendGoal?.(goal, (a)=>{setMessages([]), setLastAnswer('')}, (a)=>{})
+            }} disabled={isStreaming}>
+            <IconTrash size={20} />
+          </ActionIcon>
+          <ActionIcon size="36" radius="md" onClick={() => { addMessage(input); setInput(""); }} disabled={isStreaming}>
+            <IconSend size={20} />
+          </ActionIcon>
+        </Flex>
       </Flex>
 	</Card>
   )
