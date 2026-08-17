@@ -137,23 +137,35 @@ function TaskSelector({ ros, paramClient }) {
           <Stack gap="sm">
             {availableTasks.map((task, index) => {
               const val = selectedValues[task];
-              return (<Paper key={`avail-${task}-${index}`} shadow="sm" p="md" withBorder>
-                <Group justify="space-between">
-                  <Text fw={500}>{task}</Text>
-                  {(selectableTarget.includes(task)) ? <NumberInput
-                        label="Value" placeholder="0–1" min={0} max={1} step={0.05} decimalScale={2} value={  selectedValues[task] ?? ""}
-                        onChange={(v) =>
-                          setSelectedValues((prev) => ({ ...prev, [task]: v }))
-                        }
-                        style={{ width: 90 }} size="xs"
-                        error={val !== undefined && val !== null && val !== "" && (val < 0 || val > 1)}
-                      /> : <div></div>}
-                  <Button variant="light" size="xs" onClick={() => moveToExecution(task, index)}>
-                    Add
-                  </Button>
-                </Group>
-              </Paper>
-            )})}
+              const isInvalid = val !== undefined && val !== null && val !== "" && (val < 0 || val > 1);
+
+              return (
+                <Paper key={`avail-${task}-${index}`} shadow="sm" p="md" withBorder radius="md">
+                  <Group justify="space-between" wrap="nowrap">
+                    <Text fw={500}>{task}</Text>
+
+                    <Group gap="xs" wrap="nowrap">
+                      {selectableTarget.includes(task) && (
+                        <NumberInput placeholder="0.00" min={0} max={1} step={0.05} decimalScale={2} fixedDecimalScale
+                          value={selectedValues[task] ?? ""}
+                          onChange={(v) => setSelectedValues((prev) => ({ ...prev, [task]: v }))}
+                          error={isInvalid} size="sm" radius="md" variant="filled" w={110}
+                          styles={{
+                            input: {textAlign: "center", fontVariantNumeric: "tabular-nums", fontWeight: 600, fontSize: "15px", paddingRight: "28px"},
+                            controls: {width: "22px", borderLeft: "1px solid var(--mantine-color-gray-3)",},
+                            control: {height: "50%", svg: {width: "14px",height: "14px",},},
+                          }}
+                        />
+                      )}
+
+                      <Button variant="light" size="xs" radius="md" onClick={() => moveToExecution(task, index)}>
+                        Add
+                      </Button>
+                    </Group>
+                  </Group>
+                </Paper>
+              );
+            })}
             {availableTasks.length === 0 && (
               <Center p="xl">
                 <Text c="dimmed">No more tasks available</Text>
