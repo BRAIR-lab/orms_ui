@@ -76,7 +76,7 @@ export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRos
       { data: robotName },
       (result) => {
         if (result.success) {
-          setRobotStatus("ready");
+          setRobotStatus("loading");
         } else {
           setRobotStatus("error");
           setRobotErrorMessage(result.message || "Robot selection refused by server.");
@@ -88,6 +88,30 @@ export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRos
       }
     );
   };
+
+  useEffect(() => {
+    let listener = new ROSLIB.Topic({
+      ros: ros,
+      name: '/ros_status',
+      messageType: 'simple_server_interfaces/msg/RosStatus'
+    });
+
+    listener.subscribe(function (message) {
+      
+      for(var i = 0; i < message.names.length; i++){
+        switch(message.names[i]){
+          case "robot":
+            setRobotStatus("ready")
+        }
+      }
+    });
+
+    return () => {
+      if (listener){
+        listener.unsubscribe();
+      }
+    }
+  }, [ros])
   
   useEffect(() => {
     // Only attempt the call if ROS is fully ready
