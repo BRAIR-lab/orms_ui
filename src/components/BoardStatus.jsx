@@ -68,7 +68,10 @@ function BoardStatus({ ros, paramClient, name, onClick, telemetryUpdaters }) {
         if( json_data['ws_data_type'] != 'task_status') return;
         let tot_completed = 0;
         if(!json_data["current_task"]) {
-          tot_completed = items.length
+          // there are no info
+          if(items.length == isCompleted + 1){ // only one task was missing
+            tot_completed = items.length
+          }
         } else {
           for(var i = 0; i < json_data["current_task"]["steps"].length; i++){
             if(json_data["current_task"]["steps"][i]["done"] == true){
