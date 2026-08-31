@@ -3,7 +3,7 @@ import { Card, Text, Button, Group } from '@mantine/core'
 import TitleTile from './TitleTile'
 import * as ROSLIB from "roslib";
 
-export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning, telemetryUpdaters }) {
+export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning, telemetryUpdaters, allowChat, setAllowChat }) {
   const [time, setTime] = useState(0) // milliseconds
   const [running, setRunning] = useState(false)
   const intervalRef = useRef(null)
@@ -132,7 +132,7 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
         </Text>
       </Card.Section>
       
-      <Group grow style={{ marginTop: 'auto' }}>
+      <Group grow style={{ marginTop: 'auto', gap: '8px' }}>
         <Button 
           onClick={() => {
             if(!running) {
@@ -143,12 +143,20 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
           }}
           color={running ? 'red' : 'green'}
           size="md"
-          style={{
-            fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
-            minHeight: '36px'
-          }}
+          style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1rem)', minHeight: '36px' }}
         >
           {running ? 'Stop' : 'Start'}
+        </Button>
+
+        <Button
+          onClick={() => setAllowChat((allowChat) => !allowChat)}
+          color={allowChat ? 'blue' : 'gray'}
+          variant={allowChat ? 'filled' : 'outline'}
+          size="md"
+          style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1rem)', minHeight: '36px' }}
+          aria-pressed={allowChat}
+        >
+          {allowChat ? 'Use chat: On' : 'Use chat: Off'}
         </Button>
       </Group>
     </Card>

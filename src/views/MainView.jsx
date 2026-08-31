@@ -21,6 +21,7 @@ function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws, d
   const saveLayout = (layout) => {
     localStorage.setItem('layout', JSON.stringify(layout));
   };
+  const[allowChat, setAllowChat] = useState(true)
   // Reshape the layout 
   const [layout, setLayout] = React.useState(getInitialLayout());
   const additionalModules = React.useMemo(() => {
@@ -122,7 +123,9 @@ function MainView({ paramClient, setViewSrv, ros, toggleRunning, taskboard_ws, d
                 setViewSrv: setViewSrv,
                 toggleIsRunning: toggleRunning,
                 onClose: () => removeElement(moduleName['i']),
-                telemetryUpdaters: telemetryRegister
+                telemetryUpdaters: telemetryRegister,
+                allowChat: allowChat,
+                setAllowChat: setAllowChat
               })
             }
           </div>

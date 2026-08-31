@@ -28,7 +28,7 @@ const defaultLayout = [
 
 export { all_modules, defaultLayout, getNamedModule}
 
-function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRunning, telemetryUpdaters}) {
+function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRunning, telemetryUpdaters, allowChat, setAllowChat}) {
 	const match = name.match(/^camera(.+)$/);
 	if (match) {
 		name = 'camera'
@@ -44,11 +44,11 @@ function getNamedModule({name, ros, paramClient, setViewSrv, onClose, toggleIsRu
 			)
 		case 'timer':
 			return (
-				<Timer ros={ros} paramClient={paramClient} name={'Execution Time'} onClick={onClose} toggleIsRunning={toggleIsRunning} telemetryUpdaters={telemetryUpdaters}/>
+				<Timer ros={ros} paramClient={paramClient} name={'Execution Time'} onClick={onClose} toggleIsRunning={toggleIsRunning} telemetryUpdaters={telemetryUpdaters} allowChat={allowChat} setAllowChat={setAllowChat}/>
 			)
 		case 'chat':
 			return (
-				<ChatToBaby name={'Robot Chat Interface'} onClick={onClose} ros={ros}/>
+				<ChatToBaby name={'Robot Chat Interface'} onClick={onClose} ros={ros} allowChat={allowChat}/>
 			)
 		default:
 			if(name.includes('telemetry')){

@@ -57,7 +57,7 @@ function MessageContent({ children, isUser }) {
   )
 }
 
-export function ChatToBaby({name, onClick, ros}) {
+export function ChatToBaby({name, onClick, ros, allowChat}) {
   const [input, setInput] = useState("");
   const [lastAnswer, setLastAnswer] = useState('')
   const [messages, setMessages] = useState([])
@@ -214,10 +214,10 @@ export function ChatToBaby({name, onClick, ros}) {
               var goal = { question: "" }
               // use askAction from state
               askAction?.sendGoal?.(goal, (a)=>{setMessages([]), setLastAnswer('')}, (a)=>{})
-            }} disabled={isStreaming}>
+            }} disabled={isStreaming || !allowChat}>
             <IconTrash size={20} />
           </ActionIcon>
-          <ActionIcon size="36" radius="md" onClick={() => { addMessage(input); setInput(""); }} disabled={isStreaming}>
+          <ActionIcon size="36" radius="md" onClick={() => { addMessage(input); setInput(""); }} disabled={isStreaming || !allowChat}>
             <IconSend size={20} />
           </ActionIcon>
         </Flex>
