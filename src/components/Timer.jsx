@@ -82,9 +82,9 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
     setGetFinalTime(getFinalTimeSrv)
   }, [ros]);
 
-  const handleSendList = () => {
+  const handleSendList = (useChat) => {
     if (!sendList) return;
-    sendList.callService({}, (result) => {
+    sendList.callService({interactive: useChat}, (result) => {
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -136,7 +136,7 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
         <Button 
           onClick={() => {
             if(!running) {
-              handleSendList()
+              handleSendList(allowChat)
             } else {
               handleStopTask()
             }
@@ -155,6 +155,7 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
           size="md"
           style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1rem)', minHeight: '36px' }}
           aria-pressed={allowChat}
+          disabled={running}
         >
           {allowChat ? 'Use chat: On' : 'Use chat: Off'}
         </Button>
