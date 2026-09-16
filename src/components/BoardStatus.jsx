@@ -38,6 +38,7 @@ function SingleTask( {name, color} ) {
 
 function BoardStatus({ ros, paramClient, name, onClick, telemetryUpdaters }) {
   const [isCompleted, setIsCompleted] = useState(0);
+  const [wasExecuting, setWasExecuting] = useState(false);
   const taskListenerRef = useRef(null);
   const location = useLocation();
   const [items, setItems] = useState([])
@@ -69,10 +70,14 @@ function BoardStatus({ ros, paramClient, name, onClick, telemetryUpdaters }) {
         let tot_completed = 0;
         if(!json_data["current_task"]) {
           // there are no info
-          if(items.length == isCompleted + 1){ // only one task was missing
+          if(items.length == isCompleted + 1 && wasExecuting){ // only one task was missing
             tot_completed = items.length
+            setWasExecuting(false)
           }
         } else {
+          if (!wasExecuting) {
+            setWasExecuting(true);
+          }
           for(var i = 0; i < json_data["current_task"]["steps"].length; i++){
             if(json_data["current_task"]["steps"][i]["done"] == true){
               tot_completed++
@@ -90,7 +95,7 @@ function BoardStatus({ ros, paramClient, name, onClick, telemetryUpdaters }) {
       return () => {
         delete telemetryUpdaters["taskStat"]
       }
-    }, [telemetryUpdaters, isCompleted, items]);
+    }, [telemetryUpdaters, isCompleted, items, wasExecuting]);
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder style={{ height: '100%' }}>

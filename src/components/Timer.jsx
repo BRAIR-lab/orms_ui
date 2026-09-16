@@ -40,7 +40,7 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
         console.log(json_data["current_task"])
         setTime(json_data["current_task"]["time"]*1000)
       } else {
-        if(running){
+        if(running && time < 1000){
           toggleIsRunning()
           setRunning(false)
           getFinalTime.callService({}, (result) => {
@@ -136,7 +136,18 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
         <Button 
           onClick={() => {
             if(!running) {
-              handleSendList(allowChat)
+                if (!sendList) return;
+                toggleIsRunning();
+                setRunning(true);
+                setTime(0);
+                sendList.callService({interactive: allowChat}, (result) => {
+                  if (result.success) {
+                    toast.success(result.message);
+                  } else {
+                    running && toggleIsRunning();
+                    toast.error(result.message);
+                  }
+                });
             } else {
               handleStopTask()
             }
