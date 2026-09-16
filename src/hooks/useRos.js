@@ -6,29 +6,54 @@ export function useRos(rosIP) {
 	const [status, setStatus] = useState('idle');
 	const [setViewSrv, setSetVewSrv] = useState(null);
 	const [paramClient, setParamClient] = useState(null);
+	const [retryCount, setRetryCount] = useState(0);
 
-	const connect = () => {
+	useEffect(() => {
+		let timeoutId;
+		let isCancelled = false; // Flag to prevent state updates if the user keeps typing
+		let rosInstance = null;
+
 		if (!isValidAddress(rosIP)) {
-			console.log("Invalid ROS address:", rosIP);
 			setStatus("idle");
 			return;
 		}
 
 		setStatus("loading");
-		const rosInstance = new ROSLIB.Ros({
+		rosInstance = new ROSLIB.Ros({
 			url: 'ws://' + rosIP
 		});
+
+		// Helper to schedule a retry safely
+		const scheduleRetry = () => {
+			if (isCancelled) return;
+			
+			// Clear any existing timeout so we don't trigger multiple retries 
+			// if both 'error' and 'close' fire sequentially
+			clearTimeout(timeoutId);
+			
+			timeoutId = setTimeout(() => {
+				if (!isCancelled) {
+					setRetryCount(prev => prev + 1);
+				}
+			}, 1000); // Wait 1 second before retrying
+		};
+
 		rosInstance.on('connection', () => {
+			if (isCancelled) return;
 			console.log('Connected to websocket server.');
 			setStatus("ready");
 		});
 		rosInstance.on('error', (error) => {
+			if (isCancelled) return;
 			console.log('Error connecting to websocket server: ', error);
 			setStatus("error");
+			scheduleRetry();
 		});
 		rosInstance.on('close', () => {
+			if (isCancelled) return;
 			console.log("Disconnected from ROS");
 			setStatus("error");
+			scheduleRetry();
 		});
 
 		setRos(rosInstance);
@@ -45,25 +70,28 @@ export function useRos(rosIP) {
 			name: '/set_view',
 			serviceType: 'simple_server/srv/SetInt'
 		});
-		setSetVewSrv(setViewService);
+		setSetVewSrv(setSetVewSrv);
 
-		return rosInstance;
-	};
-
-	useEffect(() => {
-		const rosInstance = connect();
-
+		// CLEANUP FUNCTION: This is where the magic happens.
+		// If rosIP changes (user typed a character) OR the component unmounts,
+		// this block executes immediately, killing the old attempt.
 		return () => {
-			if (rosInstance) rosInstance.close();
+			isCancelled = true;
+			clearTimeout(timeoutId);
+			if (rosInstance) {
+				rosInstance.close();
+			}
 		};
-	}, [rosIP]);
+		
+	// Adding retryCount triggers a fresh run of this entire block 1 second after a failure
+	}, [rosIP, retryCount]); 
 
 	const retryRos = () => {
-		if (ros) ros.close(); // clean previous connection
-		connect();
+		// Manually trigger a fresh reconnect cycle
+		setRetryCount(prev => prev + 1); 
 	};
 
-  	return { ros, status, paramClient, setViewSrv, retryRos };
+	return { ros, status, paramClient, setViewSrv, retryRos };
 }
 
 export function isValidAddress(input, noPort=false) {
@@ -87,4 +115,4 @@ export function isValidAddress(input, noPort=false) {
 		if (host === "localhost") return true;
 		return ipv4Regex.test(host);
 	}
-};
+}
