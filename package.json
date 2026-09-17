@@ -1,5 +1,5 @@
 {
-  "name": "simple_gui",
+  "name": "orms_gui",
   "version": "0.0.0",
   "main": "/src/index.js",
   "scripts": {

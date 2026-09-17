@@ -63,21 +63,21 @@ export default function Timer({ ros, paramClient, name, onClick, toggleIsRunning
     var setListSrv = new ROSLIB.Service({
       ros: ros,
       name: '/send_list',
-      serviceType: 'simple_server/srv/StartTask'
+      serviceType: 'agent_server/srv/StartTask'
     });
     setSendList(setListSrv);
 
     var stopTaskSrv = new ROSLIB.Service({
       ros: ros,
       name: '/abort_task',
-      serviceType: 'simple_server/srv/StartTask'
+      serviceType: 'agent_server/srv/StartTask'
     });
     setStopTask(stopTaskSrv);
 
     var getFinalTimeSrv = new ROSLIB.Service({
       ros: ros,
       name: '/finish_time',
-      serviceType: 'simple_server/srv/FinishTime'
+      serviceType: 'agent_server/srv/FinishTime'
     });
     setGetFinalTime(getFinalTimeSrv)
   }, [ros]);

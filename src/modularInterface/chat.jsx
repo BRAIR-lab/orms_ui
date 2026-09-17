@@ -73,7 +73,7 @@ export function ChatToBaby({name, onClick, ros, allowChat}) {
     var ask = new ROSLIB.Action({
       ros: ros,
       name: '/web_chat/chat_ask',
-      actionType: 'simple_server_interfaces/action/ChatAsk'
+      actionType: 'agent_server_interfaces/action/ChatAsk'
     })
     setAskAction(ask)
     var goal = { question: "" }

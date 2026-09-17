@@ -69,7 +69,7 @@ export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRos
       ros: ros,
       name: "/select_robot",
       // Note: Replace 'your_package_msgs' with the actual package that defines SetString
-      serviceType: "simple_server/srv/SetString" 
+      serviceType: "agent_server/srv/SetString" 
     });
 
     selectRobotClient.callService(
@@ -93,7 +93,7 @@ export default function WaitPage({ rosIP, rosStatus, boardIP, boardStatus, muRos
     let listener = new ROSLIB.Topic({
       ros: ros,
       name: '/ros_status',
-      messageType: 'simple_server_interfaces/msg/RosStatus'
+      messageType: 'agent_server_interfaces/msg/RosStatus'
     });
 
     listener.subscribe(function (message) {

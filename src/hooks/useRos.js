@@ -68,7 +68,7 @@ export function useRos(rosIP) {
 		const setViewService = new ROSLIB.Service({
 			ros: rosInstance,
 			name: '/set_view',
-			serviceType: 'simple_server/srv/SetInt'
+			serviceType: 'agent_server/srv/SetInt'
 		});
 		setSetVewSrv(setSetVewSrv);
 

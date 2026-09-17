@@ -21,7 +21,7 @@ function TaskSelector({ ros, paramClient }) {
     var setListSrv = new ROSLIB.Service({
       ros: ros,
       name: '/set_list',
-      serviceType: 'simple_server/srv/SetList'
+      serviceType: 'agent_server/srv/SetList'
     });
     setSendList(setListSrv);
   }, [ros]);
